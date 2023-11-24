@@ -1,6 +1,7 @@
 import express from "express";
 import * as car from "./routes/cars";
-import * as user from "./routes/users"
+import * as user from "./routes/users";
+import * as login from "./routes/login";
 import AppDataSource from "../db/config/db";
 
 const app = express();
@@ -14,7 +15,8 @@ AppDataSource.initialize()
   });
 
 app.use(express.json());
-app.use("/api/cars", car.router);
-app.use("/api/users", user.router);
+app.use("/api/car", car.router);
+app.use("/api/user", user.router);
+app.use("/api/login", login.router);
 
 export default app;

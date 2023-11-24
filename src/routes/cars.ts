@@ -1,6 +1,7 @@
 import { Router } from "express";
 import CarController from "../controllers/cars";
 import { body, param } from "express-validator";
+import auth from "../middleware/auth";
 
 const router = Router();
 
@@ -44,7 +45,7 @@ const validationUpdateCar = [
     .notEmpty()
     .withMessage("Name should not be empty")
     .trim()
-    .isLength({ min: 4, max: 10 })
+    .isLength({ min: 1, max: 10 })
     .isAlphanumeric()
     .withMessage("Name should have only alphanumeric values"),
 
@@ -70,26 +71,47 @@ const validationUpdateCar = [
 ];
 
 const validationDeleteCar = [
-  param("id").exists().notEmpty().trim().isNumeric(),
+  param("id")
+    .exists()
+    .withMessage("Id should exist")
+    .notEmpty()
+    .withMessage("Id should not be empty")
+    .trim()
+    .isNumeric()
+    .withMessage("Model should have only numeric values"),
 ];
 
-router.post("/registration", [...validation], CarController.carRegistration);
+const validationGetOneCar = [
+  param("id")
+    .exists()
+    .withMessage("Id should exist")
+    .notEmpty()
+    .withMessage("Id should not be empty")
+    .trim()
+    .isNumeric()
+    .withMessage("Model should have only numeric values"),
+];
+
+router.post("/create", auth, [...validation], CarController.carRegistration);
 router.put(
-  "/registration/:id",
+  "/update/:id",
+  auth,
   [...validationUpdateCar],
   CarController.updateCar
 );
 router.patch(
   "/registration/:id",
+  auth,
   [...validationUpdateCar],
   CarController.partialUpdateCar
 );
 router.delete(
-  "/registration/:id",
+  "/delete/:id",
+  auth,
   [...validationDeleteCar],
   CarController.deleteCar
 );
-router.get("/", CarController.getAllCars);
-router.get("/:id", CarController.getOneCar);
+router.get("/", auth, CarController.getAllCars);
+router.get("/:id", auth, [...validationGetOneCar], CarController.getOneCar);
 
 export { router };

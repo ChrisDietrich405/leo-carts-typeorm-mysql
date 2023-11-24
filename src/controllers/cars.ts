@@ -46,6 +46,7 @@ class CarController {
     }
   }
 
+  /////NOT FINISHED
   async partialUpdateCar(req: Request, res: Response) {
     const error = validationResult(req);
 
@@ -102,9 +103,7 @@ class CarController {
       id: Number(id),
     });
 
-    return res
-      .status(200)
-      .json({ message: "Found car successfully", data: findCar });
+    return res.status(200).json({ data: findCar });
   }
 }
 

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
+import bcrypt from "bcryptjs";
+
 import AppDataSource from "../../db/config/db";
 import { User } from "../Entities/users";
 
@@ -10,10 +12,14 @@ class UserController {
     if (error.isEmpty()) {
       try {
         const { name, email, password } = req.body;
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         await AppDataSource.manager.save(User, {
           name,
           email,
-          password,
+          password: hashedPassword,
         });
 
         res.status(201).json("User created");
@@ -27,6 +33,7 @@ class UserController {
   }
 
   async deleteUser(req: Request, res: Response) {
+    console.log("hello");
     const error = validationResult(req);
 
     if (error.isEmpty()) {
